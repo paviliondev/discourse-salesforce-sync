@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DiscourseSalesforce
   class RestClient
     def self.instance

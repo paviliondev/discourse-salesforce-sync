@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DiscourseSalesforce
   class ContactUpdater
     def initialize(user)
@@ -18,9 +20,9 @@ module DiscourseSalesforce
 
     def create_record
       client = RestClient.instance
-      
+
       first_name, last_name = split_name
-      email = @user.email 
+      email = @user.email
       client.create('Contact', FirstName: first_name, LastName: last_name, Email: email)
     end
 
