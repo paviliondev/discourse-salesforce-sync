@@ -1,0 +1,20 @@
+plugins:
+  discourse_salesforce_enabled:
+    default: true
+  discourse_salesforce_client_id:
+    default: ""
+    client: false
+  discourse_salesforce_client_secret:
+    default: ""
+    client: false
+  discourse_salesforce_username:
+    default: ""
+    client: false
+  discourse_salesforce_password:
+    default: ""
+    client: false
+  discourse_salesforce_host:
+    default: "login.salesforce.com"
+    client: false
+
+  

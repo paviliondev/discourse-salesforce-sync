@@ -1,0 +1,8 @@
+en:
+  site_settings:
+    discourse_salesforce_enabled: 'Enable Discourse Salesforce plugin'
+    discourse_salesforce_client_id: 'Salesforce oauth client id'
+    discourse_salesforce_client_secret: 'Salesforce oauth client secret'
+    discourse_salesforce_username: "Salesforce account username"
+    discourse_salesforce_password: "Salesforce account password"
+    discourse_salesforce_host: "Salesforce host (change this value to connect to sandbox instances)"
