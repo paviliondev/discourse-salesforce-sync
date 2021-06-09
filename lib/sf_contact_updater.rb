@@ -23,13 +23,13 @@ module DiscourseSalesforce
 
       first_name, last_name = split_name
       email = @user.email
-      account_name = nhs_email_domain?(email) ? 
-        SiteSetting.nhs_account_name : 
+      account_name = nhs_email_domain?(email) ?
+        SiteSetting.nhs_account_name :
         SiteSetting.non_nhs_account_name
       account_id = fetch_account_id(account_name)
       contact_hash = {
-        FirstName: first_name, 
-        LastName: last_name, 
+        FirstName: first_name,
+        LastName: last_name,
         Email: email,
         AccountId: account_id
       }
@@ -60,13 +60,13 @@ module DiscourseSalesforce
       return @contact unless @contact.nil?
 
       client = RestClient.instance
-      query = "SELECT 
-        Id, 
-        FirstName, 
-        LastName, 
-        Name, 
-        Email 
-        FROM Contact 
+      query = "SELECT
+        Id,
+        FirstName,
+        LastName,
+        Name,
+        Email
+        FROM Contact
         WHERE #{SiteSetting.discourse_user_id_custom_field}=#{@user.id}
         OR Email='#{@user.email}'"
 
