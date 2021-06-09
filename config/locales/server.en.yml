@@ -6,3 +6,5 @@ en:
     discourse_salesforce_username: "Salesforce account username"
     discourse_salesforce_password: "Salesforce account password"
     discourse_salesforce_host: "Salesforce host (change this value to connect to sandbox instances)"
+    nhs_email_domains: "One or more NHS email domains"
+    discourse_user_id_custom_field: "Salesforce custom field name for storing discourse user id"
