@@ -23,7 +23,22 @@ module DiscourseSalesforce
 
       first_name, last_name = split_name
       email = @user.email
-      client.create('Contact', FirstName: first_name, LastName: last_name, Email: email)
+      account_name = nhs_email_domain?(email) ?
+        SiteSetting.nhs_account_name :
+        SiteSetting.non_nhs_account_name
+      account_id = fetch_account_id(account_name)
+      contact_hash = {
+        FirstName: first_name,
+        LastName: last_name,
+        Email: email,
+        AccountId: account_id
+      }
+      contact_hash[SiteSetting.discourse_user_id_custom_field.to_sym] = @user.id
+
+      client.create(
+        'Contact',
+        contact_hash
+      )
     end
 
     def update_record
@@ -45,7 +60,16 @@ module DiscourseSalesforce
       return @contact unless @contact.nil?
 
       client = RestClient.instance
-      query =  "SELECT Id, FirstName, LastName, Name, Email from Contact where Email='#{@user.email}'"
+      query = "SELECT
+        Id,
+        FirstName,
+        LastName,
+        Name,
+        Email
+        FROM Contact
+        WHERE #{SiteSetting.discourse_user_id_custom_field}=#{@user.id}
+        OR Email='#{@user.email}'"
+
       result = client.query(query)
       @contact = result.first
     end
@@ -57,6 +81,17 @@ module DiscourseSalesforce
     def save!
       @contact.delete 'Name'
       @contact.save!
+    end
+
+    def nhs_email_domain?(email)
+      SiteSetting.nhs_email_domains.include?(Mail::Address.new(email).domain)
+    end
+
+    def fetch_account_id(account_name)
+      client = RestClient.instance
+      query = "SELECT Id from Account WHERE Name='#{account_name}'"
+      result = client.query(query)
+      result.first.Id
     end
   end
 end
