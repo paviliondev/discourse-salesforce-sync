@@ -15,6 +15,8 @@ after_initialize do
   [
     "../lib/sf_rest_client.rb",
     "../lib/sf_contact_updater.rb",
+    "../lib/sf_group_membership_manager.rb",
+    "../jobs/update_group_membership.rb",
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
@@ -42,4 +44,23 @@ on(:site_setting_changed) do |name, _, _|
   if (client_settings.include?(name))
     DiscourseSalesforce::RestClient.reset!
   end
+end
+
+on(:user_added_to_group) do |user, group|
+  client = ::DiscourseSalesforce::RestClient.instance
+  ::Jobs.enqueue(
+    :update_group_membership, 
+    user_id: user.id, 
+    group_id: group.id,
+    action: :add
+  )
+end
+
+on(:user_removed_from_group) do |user, group|
+  ::Jobs.enqueue(
+    :update_group_membership, 
+    user_id: user.id, 
+    group_id: group.id,
+    action: :remove
+  )
 end
