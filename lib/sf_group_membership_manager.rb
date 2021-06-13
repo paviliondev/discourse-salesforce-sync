@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DiscourseSalesforce
   class GroupMembershipManager
     def initialize(user, group)
@@ -24,7 +26,7 @@ module DiscourseSalesforce
           membership_id
         )
       end
-      
+
     end
 
     def get_discourse_membership_id
@@ -38,8 +40,8 @@ module DiscourseSalesforce
     def get_membership_id
       @client.query(
         "SELECT Id
-        FROM Member__c 
-        WHERE Contact__r.Name='#{@user.name}' 
+        FROM Member__c
+        WHERE Contact__r.Name='#{@user.name}'
         AND Discourse_Membership__r.Name='#{@group.full_name}'"
       ).first&.Id
     end
