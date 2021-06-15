@@ -4,6 +4,7 @@ module DiscourseSalesforce
   class ContactUpdater
     def initialize(user)
       @user = user
+      @client = RestClient.instance
     end
 
     def create_or_update_record
@@ -19,8 +20,6 @@ module DiscourseSalesforce
     end
 
     def create_record
-      client = RestClient.instance
-
       first_name, last_name = split_name
       email = @user.email
       account_name = nhs_email_domain?(email) ?
@@ -35,7 +34,7 @@ module DiscourseSalesforce
       }
       contact_hash[SiteSetting.discourse_user_id_custom_field.to_sym] = @user.id
 
-      client.create(
+      @client.create(
         'Contact',
         contact_hash
       )
@@ -59,7 +58,6 @@ module DiscourseSalesforce
     def fetch_contact
       return @contact unless @contact.nil?
 
-      client = RestClient.instance
       query = "SELECT
         Id,
         FirstName,
@@ -70,7 +68,7 @@ module DiscourseSalesforce
         WHERE #{SiteSetting.discourse_user_id_custom_field}=#{@user.id}
         OR Email='#{@user.email}'"
 
-      result = client.query(query)
+      result = @client.query(query)
       @contact = result.first
     end
 
@@ -88,9 +86,8 @@ module DiscourseSalesforce
     end
 
     def fetch_account_id(account_name)
-      client = RestClient.instance
       query = "SELECT Id from Account WHERE Name='#{account_name}'"
-      result = client.query(query)
+      result = @client.query(query)
       result.first.Id
     end
   end
