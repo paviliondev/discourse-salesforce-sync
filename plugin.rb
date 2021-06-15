@@ -52,7 +52,7 @@ on(:user_added_to_group) do |user, group|
     :update_group_membership,
     user_id: user.id,
     group_id: group.id,
-    action: :add
+    action: "add"
   )
 end
 
@@ -61,6 +61,6 @@ on(:user_removed_from_group) do |user, group|
     :update_group_membership,
     user_id: user.id,
     group_id: group.id,
-    action: :remove
+    action: "remove"
   )
 end

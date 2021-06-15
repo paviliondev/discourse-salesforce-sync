@@ -7,7 +7,7 @@ module Jobs
       group = Group.find(args[:group_id])
       manager = DiscourseSalesforce::GroupMembershipManager.new(user, group)
 
-      if args[:action] == :insert
+      if args[:action] == "add"
         manager.add_user_to_group
       else
         manager.remove_user_from_group
