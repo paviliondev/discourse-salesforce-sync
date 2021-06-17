@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 desc "Sync Discourse Users with Salesforce Contacts"
 
 task "salesforce:sync_membership" => :environment do
@@ -31,9 +33,9 @@ end
 
 def get_users_map(instance, user_ids)
   res = instance.query(
-    "select Id, 
-     Discourse_User_Id__c 
-     from Contact 
+    "select Id,
+     Discourse_User_Id__c
+     from Contact
      WHERE Discourse_User_Id__c IN (#{user_ids.join(',')})"
   ).pluck(:Discourse_User_Id__c, :Id)
   hash = Hash[res]

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 desc "Sync Discourse Users with Salesforce Contacts"
 
 task "salesforce:sync_contacts" => :environment do
@@ -7,7 +9,7 @@ task "salesforce:sync_contacts" => :environment do
 
   User.real.find_in_batches do |user_array|
     contact_records = user_array.map do |u|
-      first_name,last_name = u.name.split(' ')
+      first_name, last_name = u.name.split(' ')
       {
         FirstName: first_name,
         LastName: last_name || u.username,
@@ -31,7 +33,6 @@ def get_account_id(email, account_map)
 end
 
 def get_account_map(instance)
-  res = instance.query("select Id,Name from Account").pluck(:Name,:Id)
+  res = instance.query("select Id,Name from Account").pluck(:Name, :Id)
   Hash[res]
 end
-
