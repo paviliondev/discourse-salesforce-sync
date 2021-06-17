@@ -32,12 +32,14 @@ def get_group_map(instance)
 end
 
 def get_users_map(instance, user_ids)
+  custom_field = SiteSetting.discourse_user_id_custom_field
   res = instance.query(
     "select Id,
-     Discourse_User_Id__c
+     #{custom_field}
      from Contact
-     WHERE Discourse_User_Id__c IN (#{user_ids.join(',')})"
-  ).pluck(:Discourse_User_Id__c, :Id)
+     WHERE #{custom_field} IN (#{user_ids.join(',')})"
+  ).pluck(custom_field.to_sym, :Id)
+
   hash = Hash[res]
-  hash.transform_keys!(&:to_i)
+  hash.transform_keys(&:to_i)
 end
