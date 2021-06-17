@@ -16,5 +16,22 @@ module DiscourseSalesforce
       @@instance = nil
       instance
     end
+
+    def self.bulk_api_instance
+      @@authenticated ||= false
+
+      if !@@authenticated
+        instance.authenticate!
+        @@authenticated = true
+      end
+
+      @@bulk_api_instance ||= SalesforceBulkApi::Api.new(instance)
+    end
+
+    def self.reset_bulk_api_instance!
+      @@bulk_api_instance = nil
+      @@authenticated = false
+      bulk_api_instance
+    end
   end
 end

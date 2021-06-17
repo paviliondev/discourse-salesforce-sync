@@ -8,6 +8,8 @@
 
 gem 'faraday_middleware', '1.0.0', require: true
 gem 'restforce', '5.0.1', require: true
+gem 'xml-simple', '1.1.8', require: false
+gem 'salesforce_bulk_api', '1.0.0', require: true
 
 enabled_site_setting :discourse_salesforce_enabled
 
