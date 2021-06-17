@@ -22,7 +22,7 @@ module DiscourseSalesforce
     def create_record
       first_name, last_name = split_name
       email = @user.email
-      account_name = nhs_email_domain?(email) ?
+      account_name = self.class.nhs_email_domain?(email) ?
         SiteSetting.nhs_account_name :
         SiteSetting.non_nhs_account_name
       account_id = fetch_account_id(account_name)
@@ -85,7 +85,7 @@ module DiscourseSalesforce
       @contact.save!
     end
 
-    def nhs_email_domain?(email)
+    def self.nhs_email_domain?(email)
       SiteSetting.nhs_email_domains.include?(Mail::Address.new(email).domain)
     end
 

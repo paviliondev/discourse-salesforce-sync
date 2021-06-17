@@ -50,7 +50,7 @@ module DiscourseSalesforce
       @client.query(
         "SELECT Id
         FROM Contact
-        WHERE Discourse_User_Id__c=#{@user.id}
+        WHERE #{SiteSetting.discourse_user_id_custom_field}=#{@user.id}
         OR Email='#{@user.email}'"
       ).first&.Id
     end
