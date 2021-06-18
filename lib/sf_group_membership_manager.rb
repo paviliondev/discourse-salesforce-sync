@@ -26,7 +26,6 @@ module DiscourseSalesforce
           membership_id
         )
       end
-
     end
 
     def get_discourse_membership_id
