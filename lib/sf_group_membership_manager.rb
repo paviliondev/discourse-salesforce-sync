@@ -10,10 +10,13 @@ module DiscourseSalesforce
 
     def add_user_to_group
       unless membership_exists?
+        discourse_membership_id = get_discourse_membership_id
+        contact_id = get_contact_id
+
         @client.create!(
           'Member__c',
-          Discourse_Membership__c: get_discourse_membership_id,
-          Contact__c: get_contact_id
+          Discourse_Membership__c: discourse_membership_id,
+          Contact__c: contact_id
         )
       end
     end
@@ -33,7 +36,7 @@ module DiscourseSalesforce
       @client.query(
         "SELECT Id
         FROM Discourse_Membership__c
-        WHERE Name='#{@group.full_name}'"
+        WHERE Name='#{@group.name}'"
       ).first&.Id
     end
 
@@ -41,8 +44,8 @@ module DiscourseSalesforce
       @client.query(
         "SELECT Id
         FROM Member__c
-        WHERE Contact__r.Name='#{@user.name}'
-        AND Discourse_Membership__r.Name='#{@group.full_name}'"
+        WHERE Contact__r.#{SiteSetting.discourse_user_id_custom_field}=#{@user.id}
+        AND Discourse_Membership__r.Name='#{@group.name}'"
       ).first&.Id
     end
 
