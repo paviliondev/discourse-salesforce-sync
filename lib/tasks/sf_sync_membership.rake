@@ -32,7 +32,7 @@ def get_group_map(instance)
 end
 
 def get_users_map(instance, user_ids)
-  custom_field = SiteSetting.discourse_user_id_custom_field
+  custom_field = SiteSetting.discourse_salesforce_discourse_user_id_custom_field
   res = instance.query(
     "select Id,
      #{custom_field}

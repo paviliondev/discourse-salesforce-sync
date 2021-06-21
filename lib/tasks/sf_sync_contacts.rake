@@ -26,8 +26,8 @@ end
 
 def get_account_id(email, account_map)
   account_name = DiscourseSalesforce::ContactUpdater.nhs_email_domain?(email) ?
-    SiteSetting.nhs_account_name :
-    SiteSetting.non_nhs_account_name
+    SiteSetting.discourse_salesforce_nhs_account_name :
+    SiteSetting.discourse_salesforce_non_nhs_account_name
 
     account_map[account_name]
 end

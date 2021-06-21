@@ -16,18 +16,18 @@ plugins:
   discourse_salesforce_host:
     default: "login.salesforce.com"
     client: false
-  nhs_email_domains:
+  discourse_salesforce_nhs_email_domains:
     client: false
     type: list
     list_type: compact
     default: ""
     allow_any: true
-  nhs_account_name:
+  discourse_salesforce_nhs_account_name:
     client: false
     default: ""
-  non_nhs_account_name:
+  discourse_salesforce_non_nhs_account_name:
     client: false
     default: ""
-  discourse_user_id_custom_field:
+  discourse_salesforce_discourse_user_id_custom_field:
     client: false
     default: "Discourse_User_Id__c"

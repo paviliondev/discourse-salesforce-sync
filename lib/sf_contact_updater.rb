@@ -23,8 +23,8 @@ module DiscourseSalesforce
       first_name, last_name = split_name
       email = @user.email
       account_name = self.class.nhs_email_domain?(email) ?
-        SiteSetting.nhs_account_name :
-        SiteSetting.non_nhs_account_name
+        SiteSetting.discourse_salesforce_nhs_account_name :
+        SiteSetting.discourse_salesforce_non_nhs_account_name
       account_id = fetch_account_id(account_name)
       contact_hash = {
         FirstName: first_name,
@@ -32,7 +32,7 @@ module DiscourseSalesforce
         Email: email,
         AccountId: account_id
       }
-      contact_hash[SiteSetting.discourse_user_id_custom_field.to_sym] = @user.id
+      contact_hash[SiteSetting.discourse_salesforce_discourse_user_id_custom_field.to_sym] = @user.id
 
       @client.create(
         'Contact',
@@ -65,7 +65,7 @@ module DiscourseSalesforce
         Name,
         Email
         FROM Contact
-        WHERE #{SiteSetting.discourse_user_id_custom_field}=#{@user.id}
+        WHERE #{SiteSetting.discourse_salesforce_discourse_user_id_custom_field}=#{@user.id}
         OR Email='#{@user.email}'"
 
       result = @client.query(query)
@@ -82,7 +82,7 @@ module DiscourseSalesforce
     end
 
     def self.nhs_email_domain?(email)
-      SiteSetting.nhs_email_domains.include?(Mail::Address.new(email).domain)
+      SiteSetting.discourse_salesforce_nhs_email_domains.include?(Mail::Address.new(email).domain)
     end
 
     def fetch_account_id(account_name)

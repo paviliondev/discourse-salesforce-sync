@@ -44,7 +44,7 @@ module DiscourseSalesforce
       @client.query(
         "SELECT Id
         FROM Member__c
-        WHERE Contact__r.#{SiteSetting.discourse_user_id_custom_field}=#{@user.id}
+        WHERE Contact__r.#{SiteSetting.discourse_salesforce_discourse_user_id_custom_field}=#{@user.id}
         AND Discourse_Membership__r.Name='#{@group.name}'"
       ).first&.Id
     end
@@ -53,7 +53,7 @@ module DiscourseSalesforce
       @client.query(
         "SELECT Id
         FROM Contact
-        WHERE #{SiteSetting.discourse_user_id_custom_field}=#{@user.id}
+        WHERE #{SiteSetting.discourse_salesforce_discourse_user_id_custom_field}=#{@user.id}
         OR Email='#{@user.email}'"
       ).first&.Id
     end
