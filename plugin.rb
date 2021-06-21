@@ -50,6 +50,7 @@ on(:site_setting_changed) do |name, _, _|
 
   if (client_settings.include?(name))
     DiscourseSalesforce::RestClient.reset!
+    DiscourseSalesforce::RestClient.reset_bulk_api_instance!
   end
 end
 
