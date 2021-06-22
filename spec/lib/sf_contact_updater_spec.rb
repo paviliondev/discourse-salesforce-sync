@@ -5,7 +5,7 @@ require "rails_helper"
 describe DiscourseSalesforce::ContactUpdater do
   let(:sf_user_email) { "faizan@gagan.com" }
   let(:sf_user) { Fabricate(:user, email: sf_user_email) }
-  let(:sf_contact_updater) { DiscourseSalesforce::ContactUpdater.new(sf_user) }
+  let(:sf_contact_updater) { DiscourseSalesforce::ContactUpdater.new(user: sf_user) }
 
   class RestforceMock
   end

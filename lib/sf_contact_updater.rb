@@ -2,7 +2,9 @@
 
 module DiscourseSalesforce
   class ContactUpdater
-    def initialize(user)
+    attr_accessor :user
+
+    def initialize(user: nil)
       @user = user
       @client = RestClient.instance
     end
@@ -19,25 +21,26 @@ module DiscourseSalesforce
       !!fetch_contact
     end
 
-    def create_record
-      first_name, last_name = split_name
-      email = @user.email
-      account_name = self.class.nhs_email_domain?(email) ?
-        SiteSetting.discourse_salesforce_nhs_account_name :
-        SiteSetting.discourse_salesforce_non_nhs_account_name
-      account_id = fetch_account_id(account_name)
-      contact_hash = {
+    def build_contact(bulk_user: nil)
+      @user = bulk_user if bulk_user.present?
+      first_name, last_name = get_name
+
+      contact = {
         FirstName: first_name,
         LastName: last_name,
-        Email: email,
-        AccountId: account_id
+        Email: @user.email,
+        AccountId: get_account_id
       }
-      contact_hash[SiteSetting.discourse_salesforce_discourse_user_id_custom_field.to_sym] = @user.id
 
-      @client.create(
-        'Contact',
-        contact_hash
-      )
+      if user_id_custom_field
+        contact[user_id_custom_field.to_sym] = @user.id
+      end
+
+      contact
+    end
+
+    def create_record
+      @client.create('Contact', build_contact)
     end
 
     def update_record
@@ -53,12 +56,6 @@ module DiscourseSalesforce
       @user.reload
     end
 
-    private
-
-    def split_name
-      @user.name.split(' ')
-    end
-
     def fetch_contact
       return @contact unless @contact.nil?
 
@@ -69,7 +66,7 @@ module DiscourseSalesforce
         Name,
         Email
         FROM Contact
-        WHERE #{SiteSetting.discourse_salesforce_discourse_user_id_custom_field}=#{@user.id}
+        WHERE #{user_id_custom_field}=#{@user.id}
         OR Email='#{@user.email}'"
 
       result = @client.query(query)
@@ -85,14 +82,35 @@ module DiscourseSalesforce
       @contact.save!
     end
 
-    def self.nhs_email_domain?(email)
-      SiteSetting.discourse_salesforce_nhs_email_domains.include?(Mail::Address.new(email).domain)
+    def nhs_email_domain?
+      domain = Mail::Address.new(@user.email).domain
+      SiteSetting.discourse_salesforce_nhs_email_domains.include?(domain)
     end
 
-    def fetch_account_id(account_name)
-      query = "SELECT Id from Account WHERE Name='#{account_name}'"
-      result = @client.query(query)
-      result.first.Id
+    def get_account_id
+      @map ||= Hash[@client.query("select Id,Name from Account").pluck(:Name, :Id)]
+      @map[get_account_name]
+    end
+
+    def get_account_name
+      nhs_email_domain? ?
+        SiteSetting.discourse_salesforce_nhs_account_name :
+        SiteSetting.discourse_salesforce_non_nhs_account_name
+    end
+
+    def get_name
+      if @user.name.present?
+        @user.name.split(' ')
+      else
+        [
+          nil,
+          @user.username
+        ]
+      end
+    end
+
+    def user_id_custom_field
+      SiteSetting.discourse_salesforce_discourse_user_id_custom_field
     end
   end
 end
