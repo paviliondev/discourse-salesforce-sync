@@ -49,6 +49,10 @@ module DiscourseSalesforce
       save!
     end
 
+    def reload_user!
+      @user.reload
+    end
+
     private
 
     def split_name
