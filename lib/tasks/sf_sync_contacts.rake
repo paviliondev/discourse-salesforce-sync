@@ -9,10 +9,13 @@ task "salesforce:sync_contacts" => :environment do
 
   User.real.find_in_batches do |user_array|
     contact_records = user_array.map do |u|
-      first_name, last_name = u.name.split(' ')
+      first_name = nil
+      last_name = u.username
+      first_name, last_name = u.name.split(' ') if u.name.present?
+
       {
         FirstName: first_name,
-        LastName: last_name || u.username,
+        LastName: last_name,
         Email: u.email,
         AccountId: get_account_id(u.email, account_map),
         Discourse_User_Id__c: u.id,
