@@ -55,7 +55,6 @@ on(:site_setting_changed) do |name, _, _|
 end
 
 on(:user_added_to_group) do |user, group|
-  client = ::DiscourseSalesforce::RestClient.instance
   ::Jobs.enqueue(
     :sf_update_group_membership,
     user_id: user.id,
