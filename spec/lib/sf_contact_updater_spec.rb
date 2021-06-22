@@ -20,7 +20,7 @@ describe DiscourseSalesforce::ContactUpdater do
       sf_contact_updater.stubs(:create_record).returns(true)
 
       sf_contact_updater.expects(:create_record).once
-      sf_contact_updater.expects(:create_record).never
+      sf_contact_updater.expects(:update_record).never
       sf_contact_updater.create_or_update_record
     end
 
@@ -29,7 +29,7 @@ describe DiscourseSalesforce::ContactUpdater do
       sf_contact_updater.stubs(:update_record).returns(true)
 
       sf_contact_updater.expects(:update_record).once
-      sf_contact_updater.expects(:update_record).never
+      sf_contact_updater.expects(:create_record).never
       sf_contact_updater.create_or_update_record
     end
   end
