@@ -49,8 +49,12 @@ on(:site_setting_changed) do |name, _, _|
   }
 
   if (client_settings.include?(name))
-    DiscourseSalesforce::RestClient.reset!
-    DiscourseSalesforce::RestClient.reset_bulk_api_instance!
+    begin
+      DiscourseSalesforce::RestClient.reset!
+      DiscourseSalesforce::RestClient.reset_bulk_api_instance!
+    rescue Restforce::AuthenticationError
+      #TODO: notify admins about the credentials not working
+    end
   end
 end
 
