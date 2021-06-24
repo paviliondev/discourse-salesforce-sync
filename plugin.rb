@@ -18,8 +18,10 @@ after_initialize do
     "../lib/discourse_salesforce/engine.rb",
     "../lib/discourse_salesforce/rest_client.rb",
     "../lib/discourse_salesforce/contact_updater.rb",
+    "../lib/discourse_salesforce/group_updater.rb",
     "../lib/discourse_salesforce/group_membership_manager.rb",
     "../jobs/update_contact_record.rb",
+    "../jobs/update_group.rb",
     "../jobs/update_group_membership.rb"
   ].each do |path|
     load File.expand_path(path, __FILE__)
@@ -85,5 +87,19 @@ on(:user_removed_from_group) do |user, group|
     user_id: user.id,
     group_id: group.id,
     action: "remove"
+  )
+end
+
+on(:group_created) do |group|
+  ::Jobs.enqueue(
+    :sf_update_group,
+    group_id: group.id,
+  )
+end
+
+on(:group_updated) do |group|
+  ::Jobs.enqueue(
+    :sf_update_group,
+    group_id: group.id,
   )
 end
