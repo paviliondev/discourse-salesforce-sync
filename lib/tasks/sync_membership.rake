@@ -7,18 +7,18 @@ task "salesforce:sync_membership" => :environment do
   api_instance = DiscourseSalesforce::RestClient.instance
   group_map = get_group_map(api_instance)
 
-  User.real.includes(:groups).find_in_batches do |users|
-    users_map = get_users_map(api_instance, users.pluck(:id))
+  users = User.real
+  users = users.where(approved: true) if SiteSetting.must_approve_users?
+
+  users.includes(:groups).find_in_batches do |users_list|
+    users_map = get_users_map(api_instance, users_list.pluck(:id))
+    manager = ::DiscourseSalesforce::GroupMembershipManager.new
     membership_records = []
 
-    users.each do |user|
+    users_list.each do |user|
       user_groups = user.groups
       user_groups.each do |group|
-        membership_record = {
-          Discourse_Membership__c: group_map[group.name],
-          Contact__c: users_map[user.id],
-        }
-        membership_records << membership_record
+        membership_records << manager.build_membership(group_map[group.name], users_map[user.id])
       end
     end
     result = bulk_instance.create("Member__c", membership_records)

@@ -15,24 +15,38 @@ enabled_site_setting :discourse_salesforce_enabled
 
 after_initialize do
   [
-    "../lib/sf_rest_client.rb",
-    "../lib/sf_contact_updater.rb",
-    "../lib/sf_group_membership_manager.rb",
-    "../jobs/sf_update_contact_record.rb",
-    "../jobs/sf_update_group_membership.rb"
+    "../lib/discourse_salesforce/engine.rb",
+    "../lib/discourse_salesforce/rest_client.rb",
+    "../lib/discourse_salesforce/contact_updater.rb",
+    "../lib/discourse_salesforce/group_updater.rb",
+    "../lib/discourse_salesforce/group_membership_manager.rb",
+    "../jobs/update_contact_record.rb",
+    "../jobs/update_group.rb",
+    "../jobs/update_group_membership.rb"
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
 end
 
 on(:user_created) do |user|
-  ::Jobs.enqueue(
-    :sf_update_contact_record,
-    user_id: user.id,
-  )
+  if !SiteSetting.must_approve_users? || user.approved?
+    ::Jobs.enqueue(
+      :sf_update_contact_record,
+      user_id: user.id,
+    )
+  end
 end
 
 on(:user_updated) do |user|
+  if !SiteSetting.must_approve_users? || user.approved?
+    ::Jobs.enqueue(
+      :sf_update_contact_record,
+      user_id: user.id,
+    )
+  end
+end
+
+on(:user_approved) do |user|
   ::Jobs.enqueue(
     :sf_update_contact_record,
     user_id: user.id,
@@ -49,8 +63,12 @@ on(:site_setting_changed) do |name, _, _|
   }
 
   if (client_settings.include?(name))
-    DiscourseSalesforce::RestClient.reset!
-    DiscourseSalesforce::RestClient.reset_bulk_api_instance!
+    begin
+      DiscourseSalesforce::RestClient.reset!
+      DiscourseSalesforce::RestClient.reset_bulk_api_instance!
+    rescue Restforce::AuthenticationError
+      #TODO: notify admins about the credentials not working
+    end
   end
 end
 
@@ -69,5 +87,19 @@ on(:user_removed_from_group) do |user, group|
     user_id: user.id,
     group_id: group.id,
     action: "remove"
+  )
+end
+
+on(:group_created) do |group|
+  ::Jobs.enqueue(
+    :sf_update_group,
+    group_id: group.id,
+  )
+end
+
+on(:group_updated) do |group|
+  ::Jobs.enqueue(
+    :sf_update_group,
+    group_id: group.id,
   )
 end

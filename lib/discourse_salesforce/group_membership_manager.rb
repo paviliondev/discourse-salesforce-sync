@@ -2,7 +2,7 @@
 
 module DiscourseSalesforce
   class GroupMembershipManager
-    def initialize(user, group)
+    def initialize(user: nil, group: nil)
       @user = user
       @group = group
       @client = RestClient.instance
@@ -15,8 +15,7 @@ module DiscourseSalesforce
 
         @client.create!(
           'Member__c',
-          Discourse_Membership__c: discourse_membership_id,
-          Contact__c: contact_id
+          build_membership(discourse_membership_id, contact_id)
         )
       end
     end
@@ -59,6 +58,15 @@ module DiscourseSalesforce
 
     def membership_exists?
       !!get_membership_id
+    end
+
+    def build_membership(discourse_membership_id, contact_id)
+      membership = {
+        Discourse_Membership__c: discourse_membership_id,
+        Contact__c: contact_id
+      }
+
+      membership
     end
   end
 end

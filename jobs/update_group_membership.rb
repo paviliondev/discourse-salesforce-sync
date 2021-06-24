@@ -5,7 +5,7 @@ module Jobs
     def execute(args)
       user = User.find(args[:user_id])
       group = Group.find(args[:group_id])
-      manager = DiscourseSalesforce::GroupMembershipManager.new(user, group)
+      manager = DiscourseSalesforce::GroupMembershipManager.new(user: user, group: group)
 
       if args[:action] == "add"
         manager.add_user_to_group

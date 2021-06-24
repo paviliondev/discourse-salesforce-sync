@@ -27,7 +27,7 @@ module DiscourseSalesforce
 
       contact = {
         FirstName: first_name,
-        LastName: last_name,
+        LastName: last_name || @user.username,
         Email: @user.email,
         AccountId: get_account_id
       }
@@ -45,7 +45,7 @@ module DiscourseSalesforce
 
     def update_record
       fetch_contact
-      first_name, last_name = split_name
+      first_name, last_name = get_name
       modify('FirstName', first_name)
       modify('LastName', last_name)
       modify('Email', @user.email)
