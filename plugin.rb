@@ -27,13 +27,24 @@ after_initialize do
 end
 
 on(:user_created) do |user|
-  ::Jobs.enqueue(
-    :sf_update_contact_record,
-    user_id: user.id,
-  )
+  if !SiteSetting.must_approve_users? || user.approved?
+    ::Jobs.enqueue(
+      :sf_update_contact_record,
+      user_id: user.id,
+    )
+  end
 end
 
 on(:user_updated) do |user|
+  if !SiteSetting.must_approve_users? || user.approved?
+    ::Jobs.enqueue(
+      :sf_update_contact_record,
+      user_id: user.id,
+    )
+  end
+end
+
+on(:user_approved) do |user|
   ::Jobs.enqueue(
     :sf_update_contact_record,
     user_id: user.id,
