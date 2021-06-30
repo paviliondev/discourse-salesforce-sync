@@ -20,6 +20,7 @@ after_initialize do
     "../lib/discourse_salesforce/contact_updater.rb",
     "../lib/discourse_salesforce/group_updater.rb",
     "../lib/discourse_salesforce/group_membership_manager.rb",
+    "../lib/discourse_salesforce/notifier.rb",
     "../jobs/update_contact_record.rb",
     "../jobs/update_group.rb",
     "../jobs/update_group_membership.rb"

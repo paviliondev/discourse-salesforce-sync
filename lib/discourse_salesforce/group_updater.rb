@@ -7,15 +7,20 @@ module DiscourseSalesforce
     def initialize(group: nil)
       @group = group
       @client = RestClient.instance
+      @notifier = DiscourseSalesforce::Notifier.new(:group_updater)
     end
 
     def create_or_update_record
-      if group_record_exists?
-        update_record
-      else
-        create_record
+      @notifier.wrap(group_name: @group.name) do
+        if group_record_exists?
+          update_record
+        else
+          create_record
+        end
       end
     end
+
+    protected
 
     def group_record_exists?
       !!fetch_record
@@ -47,7 +52,7 @@ module DiscourseSalesforce
     end
 
     def create_record
-      @client.create('Discourse_Membership__c', build_group)
+      @client.create!('Discourse_Membership__c', build_group)
     end
 
     def update_record

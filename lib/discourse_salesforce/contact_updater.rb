@@ -7,15 +7,20 @@ module DiscourseSalesforce
     def initialize(user: nil)
       @user = user
       @client = RestClient.instance
+      @notifier = DiscourseSalesforce::Notifier.new(:contact_updater)
     end
 
     def create_or_update_record
-      if record_exists?
-        update_record
-      else
-        create_record
+      @notifier.wrap(username: @user.username) do
+        if record_exists?
+          update_record
+        else
+          create_record
+        end
       end
     end
+
+    protected
 
     def record_exists?
       !!fetch_contact
@@ -40,7 +45,7 @@ module DiscourseSalesforce
     end
 
     def create_record
-      @client.create('Contact', build_contact)
+      @client.create!('Contact', build_contact)
     end
 
     def update_record

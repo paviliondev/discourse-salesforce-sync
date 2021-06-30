@@ -6,29 +6,36 @@ module DiscourseSalesforce
       @user = user
       @group = group
       @client = RestClient.instance
+      @notifier = DiscourseSalesforce::Notifier.new(:group_membership_manager)
     end
 
     def add_user_to_group
-      unless membership_exists?
-        discourse_membership_id = get_discourse_membership_id
-        contact_id = get_contact_id
+      @notifier.wrap(group_name: @group.name, username: @user.username) do
+        unless membership_exists?
+          discourse_membership_id = get_discourse_membership_id
+          contact_id = get_contact_id
 
-        @client.create!(
-          'Member__c',
-          build_membership(discourse_membership_id, contact_id)
-        )
+          @client.create!(
+            'Member__c',
+            build_membership(discourse_membership_id, contact_id)
+          )
+        end
       end
     end
 
     def remove_user_from_group
-      membership_id = get_membership_id
-      if membership_id.present?
-        @client.destroy!(
-          'Member__c',
-          membership_id
-        )
+      @notifier.wrap do
+        membership_id = get_membership_id
+        if membership_id.present?
+          @client.destroy!(
+            'Member__c',
+            membership_id
+          )
+        end
       end
     end
+
+    protected
 
     def get_discourse_membership_id
       @client.query(
