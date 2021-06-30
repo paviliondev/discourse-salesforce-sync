@@ -85,7 +85,7 @@ module DiscourseSalesforce
     def nhs_email_domain?
       domain = Mail::Address.new(@user.email).domain
       nhs_domains = SiteSetting.discourse_salesforce_nhs_email_domains.split('|')
-      return nhs_domains.include?(domain)
+      nhs_domains.include?(domain)
     end
 
     def get_account_id
