@@ -34,7 +34,7 @@ module DiscourseSalesforce
       @group_record = result.first
     end
 
-    def build_group_record(bulk_group: nil)
+    def build_group(bulk_group: nil)
       @group = bulk_group if bulk_group.present?
 
       group_record = {
@@ -47,11 +47,11 @@ module DiscourseSalesforce
     end
 
     def create_record
-      @client.create('Discourse_Membership__c', build_group_record)
+      @client.create('Discourse_Membership__c', build_group)
     end
 
     def update_record
-      record = build_group_record
+      record = build_group
       record[:Id] = fetch_record[:Id]
       @client.update!('Discourse_Membership__c', record)
     end
