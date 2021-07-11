@@ -20,8 +20,6 @@ module DiscourseSalesforce
       end
     end
 
-    protected
-
     def group_record_exists?
       !!fetch_record
     end
