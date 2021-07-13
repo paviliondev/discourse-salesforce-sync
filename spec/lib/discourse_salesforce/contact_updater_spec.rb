@@ -33,4 +33,33 @@ describe DiscourseSalesforce::ContactUpdater do
       sf_contact_updater.create_or_update_record
     end
   end
+
+  context "#nhs_email_domain?" do
+    SiteSetting.discourse_salesforce_nhs_email_domains = "nhs.net|nhs.com"
+
+    it "detects non-nhs domains correctly" do
+      expect(sf_contact_updater.nhs_email_domain?).to eq(false)
+    end
+
+    it "detects nhs domains correctly" do
+      sf_user.email = "hello@nhs.net"
+      sf_user.save!
+      sf_contact_updater.reload_user!
+      expect(sf_contact_updater.nhs_email_domain?).to eq(true)
+    end
+
+    it "detects nhs sub-domains correctly" do
+      sf_user.email = "hello@world.nhs.net"
+      sf_user.save!
+      sf_contact_updater.reload_user!
+      expect(sf_contact_updater.nhs_email_domain?).to eq(true)
+    end
+
+    it "detects non-nhs sub-domains correctly" do
+      sf_user.email = "hello@world.nhsx.net"
+      sf_user.save!
+      sf_contact_updater.reload_user!
+      expect(sf_contact_updater.nhs_email_domain?).to eq(true)
+    end
+  end
 end
