@@ -20,7 +20,6 @@ module DiscourseSalesforce
       end
     end
 
-
     def record_exists?
       !!fetch_contact
     end

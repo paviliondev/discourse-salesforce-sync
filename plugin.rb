@@ -23,7 +23,8 @@ after_initialize do
     "../lib/discourse_salesforce/notifier.rb",
     "../jobs/update_contact_record.rb",
     "../jobs/update_group.rb",
-    "../jobs/update_group_membership.rb"
+    "../jobs/update_group_membership.rb",
+    "../jobs/data_integrity_check.rb"
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
