@@ -35,8 +35,6 @@ module DiscourseSalesforce
       end
     end
 
-
-
     def get_discourse_membership_id
       @client.query(
         "SELECT Id

@@ -20,3 +20,4 @@ en:
           contact_updater: Updating contacts
           group_updater: Updating groups
           group_membership_manager: Updating group memberships
+          data_integrity: Data Integrity Check

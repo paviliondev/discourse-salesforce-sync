@@ -19,7 +19,7 @@ describe DiscourseSalesforce::GroupMembershipManager do
   end
 
   let(:sf_group_membership_manager) {
-    DiscourseSalesforce::GroupMembershipManager.new(sf_user, sf_group)
+    DiscourseSalesforce::GroupMembershipManager.new(user: sf_user, group: sf_group)
   }
 
   context "#add_user_to_group" do
