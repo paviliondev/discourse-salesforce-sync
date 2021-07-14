@@ -28,8 +28,12 @@ module DiscourseSalesforce
         archetype: Archetype.private_message
       }
 
-      post_opts[:raw] = @context == :data_integrity ?
-        data_integrity_post_body : post_body
+      if @context == :data_integrity
+        return if @group_array.empty?
+        post_opts[:raw] = data_integrity_post_body
+      else
+        post_opts[:raw] = post_body
+      end
 
       creator = PostCreator.new(Discourse.system_user, post_opts)
       creator.create
