@@ -52,6 +52,7 @@ module DiscourseSalesforce
       modify('FirstName', first_name)
       modify('LastName', last_name)
       modify('Email', @user.email)
+      modify('AccountId', get_account_id)
       save!
     end
 
