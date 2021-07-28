@@ -53,6 +53,8 @@ module DiscourseSalesforce
       modify('LastName', last_name)
       modify('Email', @user.email)
       modify('AccountId', get_account_id)
+      modify('Discourse_Username__c', @user.username)
+      modify('Discourse_User_Id__c', @user.id)
       save!
     end
 
@@ -68,7 +70,9 @@ module DiscourseSalesforce
         FirstName,
         LastName,
         Name,
-        Email
+        Email,
+        Discourse_Username__c,
+        Discourse_User_Id__c
         FROM Contact
         WHERE #{user_id_custom_field}=#{@user.id}
         OR Email='#{@user.email}'"
