@@ -32,7 +32,8 @@ module DiscourseSalesforce
         FirstName: first_name,
         LastName: last_name || @user.username,
         Email: @user.email,
-        AccountId: get_account_id
+        AccountId: get_account_id,
+        Discourse_Username__c: @user.username
       }
 
       if user_id_custom_field
