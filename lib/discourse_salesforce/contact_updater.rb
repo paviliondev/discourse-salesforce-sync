@@ -32,8 +32,10 @@ module DiscourseSalesforce
         FirstName: first_name,
         LastName: last_name || @user.username,
         Email: @user.email,
+        Discourse_Email__c: @user.email,
         AccountId: get_account_id,
-        Discourse_Username__c: @user.username
+        Discourse_Username__c: @user.username,
+        Discourse_Organization__c: get_employer_name
       }
 
       if user_id_custom_field
@@ -52,8 +54,9 @@ module DiscourseSalesforce
       first_name, last_name = get_name
       modify('FirstName', first_name)
       modify('LastName', last_name)
-      modify('Email', @user.email)
       modify('Discourse_Username__c', @user.username)
+      modify('Discourse_Email__c', @user.email)
+      modify('Discourse_Organization__c', get_employer_name)
       save!
     end
 
@@ -114,6 +117,13 @@ module DiscourseSalesforce
           nil,
           @user.username
         ]
+      end
+    end
+
+    def get_employer_name
+      if cf = SiteSetting.discourse_salesforce_employer_custom_field_name.presence
+        field_id = UserField.find_by_name(cf)&.id
+        @user.user_fields[field_id.to_s]
       end
     end
 

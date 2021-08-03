@@ -31,3 +31,6 @@ plugins:
   discourse_salesforce_discourse_user_id_custom_field:
     client: false
     default: "Discourse_User_Id__c"
+  discourse_salesforce_employer_custom_field_name:
+    client: false
+    default: ""
