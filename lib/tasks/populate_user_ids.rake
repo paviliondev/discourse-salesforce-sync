@@ -12,11 +12,14 @@ task "salesforce:populate_user_ids" => :environment do
 
   records = instance.query(query)
   emails = records.map { |record| record.Email }
-  users = User.find_by_email(emails) 
+  discourse_user_emails = UserEmail.where(primary: true, email: emails)
+
   update_hash = records.map do |record|
     {
       Id: record.Id,
-      Discourse_User_Id__c: User.find_by_email(record.Email)&.id
+      Discourse_User_Id__c: discourse_user_emails.find { |user_email| user_email.email == record.Email }&.user_id
     }
   end
+
+  bulk_instance.update('Contact', update_hash)
 end
