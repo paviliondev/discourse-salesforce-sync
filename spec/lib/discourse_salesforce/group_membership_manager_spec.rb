@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require_relative '../../plugin_helper'
 
 describe DiscourseSalesforce::GroupMembershipManager do
   let(:sf_user_email) { "faizan@gagan.com" }

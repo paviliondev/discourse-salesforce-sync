@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../plugin_helper'
+
 describe DiscourseSalesforce::GroupUpdater do
   let(:sf_group) { Fabricate(:group) }
   let(:sf_group_updater) { DiscourseSalesforce::GroupUpdater.new(group: sf_group) }
