@@ -35,7 +35,9 @@ describe DiscourseSalesforce::ContactUpdater do
   end
 
   context "#nhs_email_domain?" do
-    SiteSetting.discourse_salesforce_nhs_email_domains = "nhs.net|nhs.com"
+    before do
+      SiteSetting.discourse_salesforce_nhs_email_domains = "nhs.net|nhs.com"
+    end
 
     it "detects non-nhs domains correctly" do
       expect(sf_contact_updater.nhs_email_domain?).to eq(false)
@@ -59,7 +61,7 @@ describe DiscourseSalesforce::ContactUpdater do
       sf_user.email = "hello@world.nhsx.net"
       sf_user.save!
       sf_contact_updater.reload_user!
-      expect(sf_contact_updater.nhs_email_domain?).to eq(true)
+      expect(sf_contact_updater.nhs_email_domain?).to eq(false)
     end
   end
 end
