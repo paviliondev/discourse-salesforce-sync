@@ -9,9 +9,7 @@ task "salesforce:sync_contacts" => :environment do
   users = User.real
   users = users.where(approved: true) if SiteSetting.must_approve_users?
 
-  users.find_in_batches do |users_list|
-    contacts = users_list.map { |user| updater.build_contact(bulk_user: user) }
-    result = bulk_instance.create("Contact", contacts)
-    puts "result is: #{result.inspect}"
-  end
+  contacts = users.map { |user| updater.build_contact(bulk_user: user) }
+  result = bulk_instance.create("Contact", contacts, false, false, 1000)
+  puts "result is: #{result.inspect}"
 end
