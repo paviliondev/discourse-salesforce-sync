@@ -21,6 +21,7 @@ task "salesforce:sync_memberships" => :environment do
       membership_records << manager.build_membership(group_map[group.name], users_map[user.id])
     end
   end
+
   result = bulk_instance.create("Member__c", membership_records)
   puts "result is: #{result.inspect}"
 end
@@ -32,13 +33,19 @@ end
 
 def get_users_map(instance, user_ids)
   custom_field = SiteSetting.discourse_salesforce_discourse_user_id_custom_field
-  res = instance.query(
-    "select Id,
-     #{custom_field}
-     from Contact
-     WHERE #{custom_field} IN (#{user_ids.join(',')})"
-  ).pluck(custom_field.to_sym, :Id)
+  res_final = []
 
-  hash = Hash[res]
+  user_ids.in_groups_of(1000, false) do |user_ids_subset|
+    res = instance.query(
+      "select Id,
+       #{custom_field}
+       from Contact
+       WHERE #{custom_field} IN (#{user_ids_subset.join(',')})"
+    ).pluck(custom_field.to_sym, :Id)
+
+    res_final.push(*res)
+  end
+
+  hash = Hash[res_final]
   hash.transform_keys(&:to_i)
 end
