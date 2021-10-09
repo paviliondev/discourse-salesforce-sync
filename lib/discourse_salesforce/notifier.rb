@@ -12,12 +12,14 @@ module DiscourseSalesforce
     end
 
     def wrap(attrs = {}, &block)
-      begin
-        block.call
-      rescue Restforce::ResponseError, Restforce::AuthenticationError => error
-        @error_attrs = attrs
-        @error = error
-        self.send
+      if SiteSetting.discourse_salesforce_enable_sync_error_notifs
+        begin
+          block.call
+        rescue Restforce::ResponseError, Restforce::AuthenticationError => error
+          @error_attrs = attrs
+          @error = error
+          self.send
+        end
       end
     end
 

@@ -11,6 +11,7 @@ en:
     discourse_salesforce_non_nhs_account_name: "Name of the Non-NHS Account"
     discourse_salesforce_discourse_user_id_custom_field: "Salesforce custom field name for storing discourse user id"
     discourse_salesforce_employer_custom_field_name: "Name of the User Field used to input User's Employer name"
+    discourse_salesforce_enable_sync_error_notifs: "Enable Admin Notifications when a sync operation fails"
 
   discourse_salesforce:
     notifier:

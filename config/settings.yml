@@ -34,3 +34,6 @@ plugins:
   discourse_salesforce_employer_custom_field_name:
     client: false
     default: ""
+  discourse_salesforce_enable_sync_error_notifs:
+    client: false
+    default: false
