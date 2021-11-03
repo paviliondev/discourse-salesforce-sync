@@ -22,7 +22,7 @@ task "salesforce:sync_memberships" => :environment do
     end
   end
 
-  result = bulk_instance.create("Member__c", membership_records)
+  result = bulk_instance.create("Member__c", membership_records, false, false, 30000)
   puts "result is: #{result.inspect}"
 end
 
