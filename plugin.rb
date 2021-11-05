@@ -28,6 +28,38 @@ after_initialize do
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
+
+  module DiscourseSalesforce::SalesforceBulkApiPatch
+    def create_job(batch_size, send_nulls, no_null_list)
+      @batch_size = batch_size
+      @send_nulls = send_nulls
+      @no_null_list = no_null_list
+
+      xml = "#{@XML_HEADER}<jobInfo xmlns=\"http://www.force.com/2009/06/asyncapi/dataload\">"
+      xml += "<operation>#{@operation}</operation>"
+      xml += "<object>#{@sobject}</object>"
+      # This only happens on upsert
+      if !@external_field.nil?
+        xml += "<externalIdFieldName>#{@external_field}</externalIdFieldName>"
+      end
+      xml += "<concurrencyMode>Serial</concurrencyMode>"
+      xml += "<contentType>XML</contentType>"
+      xml += "</jobInfo>"
+
+      path = "job"
+      headers = Hash['Content-Type' => 'application/xml; charset=utf-8']
+
+      response = @connection.post_xml(nil, path, xml, headers)
+      response_parsed = XmlSimple.xml_in(response)
+
+      # response may contain an exception, so raise it
+      raise SalesforceException.new("#{response_parsed['exceptionMessage'][0]} (#{response_parsed['exceptionCode'][0]})") if response_parsed['exceptionCode']
+
+      @job_id = response_parsed['id'][0]
+    end
+  end
+
+  SalesforceBulkApi::Job.prepend DiscourseSalesforce::SalesforceBulkApiPatch
 end
 
 on(:user_created) do |user|
