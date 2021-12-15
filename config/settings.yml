@@ -36,4 +36,4 @@ plugins:
     default: ""
   discourse_salesforce_enable_sync_error_notifs:
     client: false
-    default: false
+    default: true
