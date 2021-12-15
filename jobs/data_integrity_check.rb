@@ -26,7 +26,7 @@ module Jobs
       end
 
       notifier = DiscourseSalesforce::Notifier.new(:data_integrity, unequal_count_groups)
-      notifier.send
+      notifier.send if SiteSetting.discourse_salesforce_enable_sync_error_notifs
     end
   end
 end
