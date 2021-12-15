@@ -31,7 +31,7 @@ module DiscourseSalesforce
       }
 
       if @context == :data_integrity
-        return if @group_array.empty?
+        return if @group_array.blank?
         post_opts[:raw] = data_integrity_post_body
       else
         post_opts[:raw] = post_body
