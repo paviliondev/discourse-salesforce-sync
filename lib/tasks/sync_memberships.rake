@@ -16,7 +16,7 @@ task "salesforce:sync_memberships" => :environment do
   membership_records = []
 
   users_list.each do |user|
-    user_groups = user.groups
+    user_groups = user.groups.where(automatic: false)
     user_groups.each do |group|
       membership_records << manager.build_membership(group_map[group.name], users_map[user.id])
     end
