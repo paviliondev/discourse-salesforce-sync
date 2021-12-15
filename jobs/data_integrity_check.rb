@@ -7,8 +7,8 @@ module Jobs
     def execute(args)
       rest_client = DiscourseSalesforce::RestClient.instance
       discourse_group_user_count = {}
-      Group.all.each do |group|
-        discourse_group_user_count[group.name] = group.users.count
+      Group.where(automatic: false).each do |group|
+        discourse_group_user_count[group.name] = group.users.real.count
       end
       aggregate = rest_client.query(
         <<-SOQL_QUERY
