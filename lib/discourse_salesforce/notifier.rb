@@ -15,11 +15,11 @@ module DiscourseSalesforce
       begin
         block.call
       rescue Restforce::ResponseError, Restforce::AuthenticationError => error
-        raise unless SiteSetting.discourse_salesforce_enable_sync_error_notifs
-
-        @error_attrs = attrs
-        @error = error
-        self.send
+        if SiteSetting.discourse_salesforce_enable_sync_error_notifs
+          @error_attrs = attrs
+          @error = error
+          self.send
+        end
       end
     end
 
@@ -31,7 +31,7 @@ module DiscourseSalesforce
       }
 
       if @context == :data_integrity
-        return if @group_array.empty?
+        return if @group_array.blank?
         post_opts[:raw] = data_integrity_post_body
       else
         post_opts[:raw] = post_body

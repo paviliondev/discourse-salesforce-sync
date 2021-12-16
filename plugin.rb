@@ -106,34 +106,42 @@ on(:site_setting_changed) do |name, _, _|
   end
 end
 
-on(:user_added_to_group) do |user, group|
-  ::Jobs.enqueue(
-    :sf_update_group_membership,
-    user_id: user.id,
-    group_id: group.id,
-    action: "add"
-  )
+on(:user_added_to_group) do |user, group, opts|
+  unless opts[:automatic]
+    ::Jobs.enqueue(
+      :sf_update_group_membership,
+      user_id: user.id,
+      group_id: group.id,
+      action: "add"
+    )
+  end
 end
 
-on(:user_removed_from_group) do |user, group|
-  ::Jobs.enqueue(
-    :sf_update_group_membership,
-    user_id: user.id,
-    group_id: group.id,
-    action: "remove"
-  )
+on(:user_removed_from_group) do |user, group, opts|
+  unless opts[:automatic]
+    ::Jobs.enqueue(
+      :sf_update_group_membership,
+      user_id: user.id,
+      group_id: group.id,
+      action: "remove"
+    )
+  end
 end
 
 on(:group_created) do |group|
-  ::Jobs.enqueue(
-    :sf_update_group,
-    group_id: group.id,
-  )
+  unless group.automatic
+    ::Jobs.enqueue(
+      :sf_update_group,
+      group_id: group.id,
+    )
+  end
 end
 
 on(:group_updated) do |group|
-  ::Jobs.enqueue(
-    :sf_update_group,
-    group_id: group.id,
-  )
+  unless group.automatic
+    ::Jobs.enqueue(
+      :sf_update_group,
+      group_id: group.id,
+    )
+  end
 end

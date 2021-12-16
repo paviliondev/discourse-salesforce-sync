@@ -6,7 +6,7 @@ task "salesforce:sync_groups" => :environment do
   bulk_instance = DiscourseSalesforce::RestClient.bulk_api_instance
   updater = DiscourseSalesforce::GroupUpdater.new
 
-  groups = Group.all
+  groups = Group.where(automatic: false)
   group_records = groups.map do |group|
     updater.build_group(bulk_group: group)
   end
