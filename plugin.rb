@@ -7,7 +7,7 @@
 # url: https://github.com/paviliondev/discourse-salesforce-sync
 
 gem 'faraday_middleware', '1.0.0', require: true
-gem 'restforce', '5.0.1', require: true
+gem 'restforce', '5.2.1', require: true
 gem 'xml-simple', '1.1.8', require: false
 gem 'salesforce_bulk_api', '1.0.0', require: true
 
