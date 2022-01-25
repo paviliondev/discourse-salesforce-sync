@@ -83,8 +83,20 @@ end
 on(:user_approved) do |user|
   ::Jobs.enqueue(
     :sf_update_contact_record,
-    user_id: user.id,
+    user_id: user.id
   )
+  # sync memberships on user approved
+  user_groups = user.groups.where(automatic: false)
+  user_groups.each do |group|
+    ::Jobs.enqueue_in(
+      2.seconds,
+      :sf_update_group_membership,
+      user_id: user.id,
+      group_id: group.id,
+      action: "add",
+      queue: 'ultra_low'
+    )
+  end
 end
 
 on(:site_setting_changed) do |name, _, _|
@@ -107,7 +119,7 @@ on(:site_setting_changed) do |name, _, _|
 end
 
 on(:user_added_to_group) do |user, group, opts|
-  unless opts[:automatic]
+  if !opts[:automatic] && user.approved?
     ::Jobs.enqueue(
       :sf_update_group_membership,
       user_id: user.id,
@@ -118,7 +130,7 @@ on(:user_added_to_group) do |user, group, opts|
 end
 
 on(:user_removed_from_group) do |user, group, opts|
-  unless opts[:automatic]
+  if !opts[:automatic] && user.approved?
     ::Jobs.enqueue(
       :sf_update_group_membership,
       user_id: user.id,
