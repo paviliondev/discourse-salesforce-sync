@@ -8,7 +8,9 @@ module Jobs
       rest_client = DiscourseSalesforce::RestClient.instance
       discourse_group_user_count = {}
       Group.where(automatic: false).each do |group|
-        discourse_group_user_count[group.name] = group.users.real.count
+        users = group.users.real
+        users = users.where(approved: true) if SiteSetting.must_approve_users?
+        discourse_group_user_count[group.name] = users.count
       end
       aggregate = rest_client.query(
         <<-SOQL_QUERY
