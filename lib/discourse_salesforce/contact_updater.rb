@@ -52,6 +52,7 @@ module DiscourseSalesforce
     def update_record
       fetch_contact
       first_name, last_name = get_name
+      last_name ||= @user.username
       modify('FirstName', first_name)
       modify('LastName', last_name)
       modify('Discourse_Username__c', @user.username)
