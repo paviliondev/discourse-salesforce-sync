@@ -130,8 +130,8 @@ on(:user_added_to_group) do |user, group, opts|
   end
 end
 
-on(:user_removed_from_group) do |user, group, opts|
-  if !opts[:automatic] && user.approved?
+on(:user_removed_from_group) do |user, group|
+  if !group.automatic && user.approved?
     ::Jobs.enqueue(
       :sf_update_group_membership,
       user_id: user.id,
