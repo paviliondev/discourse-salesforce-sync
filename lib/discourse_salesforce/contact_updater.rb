@@ -58,6 +58,10 @@ module DiscourseSalesforce
       modify('Discourse_Username__c', @user.username)
       modify('Discourse_Email__c', @user.email)
       modify('Discourse_Organization__c', get_employer_name)
+      if user_id_custom_field
+        modify(user_id_custom_field, @user.id)
+      end
+
       save!
     end
 
