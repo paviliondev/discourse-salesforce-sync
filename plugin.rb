@@ -24,7 +24,8 @@ after_initialize do
     "../jobs/update_contact_record.rb",
     "../jobs/update_group.rb",
     "../jobs/update_group_membership.rb",
-    "../jobs/data_integrity_check.rb"
+    "../jobs/data_integrity_check.rb",
+    "../jobs/create_contact_and_sync_groups.rb"
   ].each do |path|
     load File.expand_path(path, __FILE__)
   end
@@ -82,22 +83,10 @@ end
 
 on(:user_approved) do |user|
   ::Jobs.enqueue(
-    :sf_update_contact_record,
+    :sf_create_contact_and_sync_groups,
     user_id: user.id,
     queue: "critical"
   )
-  # sync memberships on user approved
-  user_groups = user.groups.where(automatic: false)
-  user_groups.each do |group|
-    ::Jobs.enqueue_in(
-      2.seconds,
-      :sf_update_group_membership,
-      user_id: user.id,
-      group_id: group.id,
-      action: "add",
-      queue: "ultra_low"
-    )
-  end
 end
 
 on(:site_setting_changed) do |name, _, _|
