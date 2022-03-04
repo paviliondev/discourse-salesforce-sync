@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Jobs
-  class SfCreateContactAndUpdateMemberships < ::Jobs::Base
+  class SfCreateContactAndSyncGroups < ::Jobs::Base
     def execute(args)
       user = User.find(args[:user_id])
       updater = DiscourseSalesforce::ContactUpdater.new(user: user)
@@ -25,7 +25,7 @@ module Jobs
       end
 
       bulk_instance = DiscourseSalesforce::RestClient.bulk_api_instance
-      bulk_instance.create!(
+      bulk_instance.create(
         "Member__c",
         membership_records
       )
