@@ -13,7 +13,7 @@ module Jobs
       contact_id = client.query("Select Id from Contact Where Discourse_User_Id__c=#{user.id}").first&.Id
       return if !contact_id
 
-      group_fetch_query = "SELECT Discourse_Group_Id__c, Id, Name from Discourse_Membership__c WHERE Discourse_Group_Id__c IN (#{group_ids.join(',')})"
+      group_fetch_query = "SELECT Id from Discourse_Membership__c WHERE Discourse_Group_Id__c IN (#{group_ids.join(',')})"
       salesforce_group_ids = client.query(group_fetch_query).map(&:Id)
       return if salesforce_group_ids.blank?
 
